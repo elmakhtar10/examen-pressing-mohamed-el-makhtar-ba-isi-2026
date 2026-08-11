@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('code')->unique();
-            $table->enum('statut', ['recu', 'en_traitement', 'pret', 'recupere', 'annule'])->default('recu');
+            $table->enum('statut', ['reçu', 'en_traitement', 'pret', 'recupere', 'annule'])->default('reçu');
             $table->decimal('montant_total', 10, 2);
             $table->boolean('is_paid')->default(false);
             $table->timestamps();
