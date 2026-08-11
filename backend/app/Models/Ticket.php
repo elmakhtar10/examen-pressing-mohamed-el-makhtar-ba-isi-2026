@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Ticket extends Model
 {
@@ -18,5 +19,10 @@ class Ticket extends Model
         return $this->belongsToMany(Service::class, 'ticket_service')
             ->withPivot('quantite', 'prix_unitaire')
             ->withTimestamps();
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
