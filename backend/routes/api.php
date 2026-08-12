@@ -18,4 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tickets/{id}', [TicketController::class, 'show']);
     Route::get('/admin/tickets', [TicketController::class, 'adminIndex']);
     Route::get('/admin/tickets/{id}', [TicketController::class, 'adminShow']);
+    Route::put('/admin/tickets/{id}/cancel', [TicketController::class, 'cancel']);
 });

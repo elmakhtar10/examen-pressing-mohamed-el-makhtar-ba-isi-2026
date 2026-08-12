@@ -127,4 +127,27 @@ class TicketController extends Controller
         ], 200);
     }
 
+    /**
+     * @param int $id
+     * @return JsonResponse
+     * Gestionnaire peut annuler une commande
+     */
+    public function cancel(int $id): JsonResponse
+    {
+        try {
+            $ticket = $this->ticketManagementService->cancelTicket($id);
+
+            return response()->json([
+                'message' => "La commande #{$ticket->code} a bien été annulée.",
+                'data'    => $ticket
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Impossible d\'annuler la commande.',
+                'error'   => $e->getMessage()
+            ], 400);
+        }
+    }
+
 }

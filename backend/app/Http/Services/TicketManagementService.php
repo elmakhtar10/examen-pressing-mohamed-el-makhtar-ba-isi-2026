@@ -78,4 +78,22 @@ class TicketManagementService{
 
         return $ticket;
     }
+
+    /**
+     * Annule un ticket (Gestionnaire uniquement)
+     */
+    public function cancelTicket(int $ticketId): Ticket
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+
+        if (in_array($ticket->statut, ['pret', 'recupere', 'annule'])) {
+            throw new Exception("Impossible d'annuler une commande qui est déjà au statut '{$ticket->statut}'.");
+        }
+
+        $ticket->update([
+            'statut' => 'annule'
+        ]);
+
+        return $ticket;
+    }
 }
