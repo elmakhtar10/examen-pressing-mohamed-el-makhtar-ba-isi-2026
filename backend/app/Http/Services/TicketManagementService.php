@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Mail\NewOrderNotificationMail;
 use App\Mail\TicketCreatedMail;
+use App\Mail\TicketReadyMail;
 use App\Models\Service;
 use App\Models\Ticket;
 use App\Models\User;
@@ -93,6 +94,43 @@ class TicketManagementService{
         $ticket->update([
             'statut' => 'annule'
         ]);
+
+        return $ticket;
+    }
+
+    /**
+     * @param int $ticketId
+     * @param string $newStatus
+     * @return Ticket
+     * @throws Exception
+     * Met à jour le statut d'un ticket selon les règles métier
+     */
+    public function updateTicketStatus(int $ticketId, string $newStatus): Ticket
+    {
+        $ticket = Ticket::with(['user', 'services'])->findOrFail($ticketId);
+
+        $allowedStatuses = ['reçu', 'en_traitement', 'pret', 'recupere'];
+
+        if (!in_array($newStatus, $allowedStatuses)) {
+            throw new Exception("Le statut '{$newStatus}' n'est pas valide.");
+        }
+
+        if ($newStatus === 'recupere' && !$ticket->is_paid) {
+            throw new Exception("Impossible de passer la commande en 'récupéré' tant que le paiement n'est pas enregistré.");
+        }
+
+        $oldStatus = $ticket->statut;
+        $ticket->update(['statut' => $newStatus]);
+
+        if ($newStatus === 'pret' && $oldStatus !== 'pret') {
+            try {
+                if ($ticket->user && $ticket->user->email) {
+                    Mail::to($ticket->user->email)->send(new TicketReadyMail($ticket));
+                }
+            } catch (Exception $e) {
+                Log::error("Échec de l'envoi du mail ticket prêt : " . $e->getMessage());
+            }
+        }
 
         return $ticket;
     }

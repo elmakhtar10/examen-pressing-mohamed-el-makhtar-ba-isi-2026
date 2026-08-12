@@ -150,4 +150,32 @@ class TicketController extends Controller
         }
     }
 
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     * Faire évoluer le statut d'un ticket par le gestionnaire
+     */
+    public function updateStatus(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'statut' => ['required', 'string', 'in:en_traitement,pret,recupere']
+        ]);
+
+        try {
+            $ticket = $this->ticketManagementService->updateTicketStatus($id, $validated['statut']);
+
+            return response()->json([
+                'message' => "Le statut de la commande #{$ticket->code} est désormais '{$ticket->statut}'.",
+                'data'    => $ticket
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors du changement de statut.',
+                'error'   => $e->getMessage()
+            ], 400);
+        }
+    }
+
 }
