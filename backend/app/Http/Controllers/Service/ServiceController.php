@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Service;
 use App\Http\Controllers\Controller;
 use App\Http\Services\ServiceManagementService;
 use App\Models\Service;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use function Pest\Laravel\json;
 
@@ -93,6 +94,11 @@ class ServiceController extends Controller
         ], 200);
     }
 
+    /**
+     * @param Service $service
+     * @return JsonResponse
+     * Archiver un service
+     */
     public function archive(Service $service){
         if ($service->disponibilite === 'inactif') {
             return response()->json([

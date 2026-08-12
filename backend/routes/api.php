@@ -11,7 +11,11 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::apiResource('services', ServiceController::class);
-    Route::put('/archives', [ServiceController::class, 'archive']);
+    Route::apiResource('/admin/services', ServiceController::class);
+    Route::put('/admin/archives', [ServiceController::class, 'archive']);
     Route::post('/commandes', [TicketController::class, 'store']);
+    Route::get('/tickets', [TicketController::class, 'index']);
+    Route::get('/tickets/{id}', [TicketController::class, 'show']);
+    Route::get('/admin/tickets', [TicketController::class, 'adminIndex']);
+    Route::get('/admin/tickets/{id}', [TicketController::class, 'adminShow']);
 });
