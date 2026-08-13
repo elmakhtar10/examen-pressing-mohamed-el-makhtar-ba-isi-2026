@@ -20,4 +20,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/tickets/{id}', [TicketController::class, 'adminShow']);
     Route::put('/admin/tickets/{id}/cancel', [TicketController::class, 'cancel']);
     Route::put('/admin/tickets/{id}/status', [TicketController::class, 'updateStatus']);
+    Route::post('/admin/tickets/{id}/pay', [TicketController::class, 'pay']);
 });

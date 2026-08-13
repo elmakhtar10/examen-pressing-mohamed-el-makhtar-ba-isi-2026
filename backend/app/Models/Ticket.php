@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Ticket extends Model
 {
@@ -13,6 +14,11 @@ class Ticket extends Model
         'statut',
         'montant_total',
         'is_paid',
+    ];
+
+    protected $casts = [
+        'is_paid' => 'boolean',
+        'montant_total' => 'decimal:2',
     ];
 
     public function services(){
@@ -25,4 +31,10 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function paiement(): HasOne
+    {
+        return $this->hasOne(Paiement::class);
+    }
+
 }

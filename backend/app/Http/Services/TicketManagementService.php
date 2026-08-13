@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Mail\NewOrderNotificationMail;
 use App\Mail\TicketCreatedMail;
 use App\Mail\TicketReadyMail;
+use App\Models\Paiement;
 use App\Models\Service;
 use App\Models\Ticket;
 use App\Models\User;
@@ -12,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class TicketManagementService{
 
@@ -133,5 +135,42 @@ class TicketManagementService{
         }
 
         return $ticket;
+    }
+
+    /**
+     * @param int $ticketId
+     * @param int $gestionnaireId
+     * @return Paiement
+     * @throws Throwable
+     * Enregistre le paiement d'un ticket en espèces dans la table dédiée
+     */
+    public function registerPayment(int $ticketId, int $gestionnaireId): Paiement
+    {
+        return DB::transaction(function () use ($ticketId, $gestionnaireId) {
+
+            $ticket = Ticket::with('paiement')->findOrFail($ticketId);
+
+            if ($ticket->is_paid) {
+                throw new Exception("Ce ticket a déjà été réglé le {$ticket->paiement->date_paiement->format('d/m/Y à H:i')}.");
+            }
+
+            if ($ticket->statut === 'annule') {
+                throw new Exception("Impossible d'enregistrer le paiement d'une commande annulée.");
+            }
+
+            $paiement = Paiement::create([
+                'ticket_id'       => $ticket->id,
+                'gestionnaire_id' => $gestionnaireId,
+                'montant'         => $ticket->montant_total,
+                'mode_paiement'   => 'especes',
+                'date_paiement'   => now(),
+            ]);
+
+            $ticket->update([
+                'is_paid' => true,
+            ]);
+
+            return $paiement;
+        });
     }
 }

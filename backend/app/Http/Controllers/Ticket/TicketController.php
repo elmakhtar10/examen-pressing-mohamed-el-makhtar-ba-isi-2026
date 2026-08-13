@@ -9,6 +9,8 @@ use App\Models\TicketService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Throwable;
+use OpenApi\Attributes as OA;
 
 class TicketController extends Controller
 {
@@ -173,6 +175,35 @@ class TicketController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Erreur lors du changement de statut.',
+                'error'   => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     * @throws Throwable
+     * Enregistrer le paiement d'une commande
+     */
+
+    public function pay(Request $request, int $ticketId): JsonResponse
+    {
+        try {
+            $gestionnaireId = $request->user()->id;
+            $paiement = $this->ticketManagementService->registerPayment($ticketId, $gestionnaireId);
+
+            return response()->json([
+                'message' => "Le paiement de "
+                    . number_format($paiement->montant, 0, ',', ' ')
+                    . " FCFA pour le ticket #{$paiement->ticket->code} a été enregistré.",
+                'data'    => $paiement->load(['ticket', 'gestionnaire:id,name'])
+            ], 201);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Impossible d\'enregistrer le paiement.',
                 'error'   => $e->getMessage()
             ], 400);
         }
