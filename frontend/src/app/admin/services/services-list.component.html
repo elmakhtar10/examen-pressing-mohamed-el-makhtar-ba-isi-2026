@@ -1,0 +1,175 @@
+<div class="space-y-6">
+
+  <!-- HEADER -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-900">Gestion des Services & Tarifs</h1>
+      <p class="text-xs text-slate-500 mt-1">Gérez le catalogue des prestations de lavage, repassage et nettoyage à sec.</p>
+    </div>
+    <button (click)="openAddModal()" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center space-x-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      <span>Nouveau Service</span>
+    </button>
+  </div>
+
+  @if (successBannerMessage) {
+    <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-2xl font-bold flex items-center space-x-2 animate-in fade-in">
+      <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+      <span>{{ successBannerMessage }}</span>
+    </div>
+  }
+
+  <!-- FILTERS & SEARCH -->
+  <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="relative w-full sm:w-80">
+      <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+      </span>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="applyFilter()"
+        placeholder="Rechercher un service..."
+        class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:border-blue-500 transition"
+      />
+    </div>
+
+    <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+      <span class="text-xs font-semibold text-slate-500">Statut :</span>
+      <select [(ngModel)]="statusFilter" (change)="applyFilter()" class="py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none font-medium">
+        <option value="all">Tous les services</option>
+        <option value="actif">Actifs seulement</option>
+        <option value="inactif">Inactifs (Archivés)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- TABLEAU DES SERVICES -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+    @if (loading) {
+      <div class="p-12 text-center text-xs font-semibold text-slate-400">
+        Chargement des services...
+      </div>
+    } @else {
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+            <th class="py-3.5 px-6">LIBELLÉ</th>
+            <th class="py-3.5 px-6">DESCRIPTION</th>
+            <th class="py-3.5 px-6">PRIX UNITAIRE</th>
+            <th class="py-3.5 px-6">DISPONIBILITÉ</th>
+            <th class="py-3.5 px-6 text-right">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-xs text-slate-700 font-medium">
+          @for (service of filteredServices; track service.id) {
+            <tr class="hover:bg-slate-50/50 transition">
+              <td class="py-4 px-6 font-bold text-slate-900">{{ service.libelle }}</td>
+              <td class="py-4 px-6 text-slate-500 max-w-xs truncate">{{ service.description }}</td>
+              <td class="py-4 px-6 font-bold text-blue-600">{{ service.prix_unitaire | number }} FCFA</td>
+              <td class="py-4 px-6">
+                @if (service.disponibilite === 'actif') {
+                  <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold text-[10px] rounded-full uppercase">Actif</span>
+                } @else {
+                  <span class="px-2.5 py-1 bg-slate-200 text-slate-600 font-bold text-[10px] rounded-full uppercase">Inactif (Archivé)</span>
+                }
+              </td>
+              <td class="py-4 px-6 text-right space-x-2">
+                <button
+                  (click)="toggleAvailability(service)"
+                  [title]="service.disponibilite === 'actif' ? 'Archiver' : 'Activer'"
+                  class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border transition inline-flex items-center space-x-1"
+                  [ngClass]="service.disponibilite === 'actif' ? 'border-amber-200 text-amber-700 hover:bg-amber-50' : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z"/></svg>
+                  <span>{{ service.disponibilite === 'actif' ? 'Archiver' : 'Activer' }}</span>
+                </button>
+                <button (click)="openEditModal(service)" class="p-1.5 text-slate-400 hover:text-blue-600 transition rounded-lg hover:bg-blue-50" title="Modifier">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"/></svg>
+                </button>
+                <button (click)="deleteService(service)" class="p-1.5 text-slate-400 hover:text-red-600 transition rounded-lg hover:bg-red-50" title="Supprimer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="py-10 text-center text-xs text-slate-400">
+                Aucun service trouvé dans le catalogue.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- MODALE AJOUT / MODIFICATION -->
+  @if (showModal) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-lg p-6 space-y-5 animate-in fade-in zoom-in-95">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h3 class="font-extrabold text-slate-900 text-base">
+            {{ isEditing ? 'Modifier le service' : 'Ajouter un nouveau service' }}
+          </h3>
+          <button (click)="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+        </div>
+
+        @if (modalErrorMessage) {
+          <div class="p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
+            {{ modalErrorMessage }}
+          </div>
+        }
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">LIBELLÉ DU SERVICE</label>
+            <input
+              type="text"
+              [(ngModel)]="formData.libelle"
+              placeholder="Ex: Lavage & Repassage Chemise"
+              class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">PRIX UNITAIRE (FCFA)</label>
+            <input
+              type="number"
+              [(ngModel)]="formData.prix_unitaire"
+              placeholder="Ex: 1500"
+              class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-blue-500"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">DESCRIPTION (OPTIONNEL)</label>
+            <textarea
+              [(ngModel)]="formData.description"
+              rows="3"
+              placeholder="Description détaillée du traitement fourni..."
+              class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:border-blue-500"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase mb-1.5">DISPONIBILITÉ</label>
+            <select [(ngModel)]="formData.disponibilite" class="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none font-medium">
+              <option value="actif">Actif (Visible dans le catalogue client)</option>
+              <option value="inactif">Inactif / Archivé (Masqué aux clients)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-3 border-t border-slate-100">
+          <button (click)="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl">
+            Annuler
+          </button>
+          <button (click)="saveService()" [disabled]="formSubmitLoading" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl shadow-xs disabled:opacity-50">
+            {{ formSubmitLoading ? 'Enregistrement...' : (isEditing ? 'Enregistrer' : 'Créer') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

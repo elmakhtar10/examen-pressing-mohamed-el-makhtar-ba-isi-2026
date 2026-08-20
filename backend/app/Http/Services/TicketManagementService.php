@@ -42,7 +42,7 @@ class TicketManagementService{
             $ticket = Ticket::create([
                 'user_id' => $userId,
                 'code' => 'TICK-' . strtoupper(uniqid()),
-                'statut' => 'reçu',
+                'statut' => 'recu',
                 'montant_total' => $totalAmount,
                 'is_paid' => false,
             ]);
@@ -51,6 +51,7 @@ class TicketManagementService{
 
             return $ticket->load(['user', 'services']);
         });
+
         /**
          * Confirmation pour le client
          */
@@ -58,7 +59,7 @@ class TicketManagementService{
             if ($ticket->user && $ticket->user->email) {
                 Mail::to($ticket->user->email)->send(new TicketCreatedMail($ticket));
             }
-        }catch (Exception $e){
+        }catch (\Throwable $e){
             Log::error("Erreur lors de l'envoi de l'email : " . $e->getMessage());
         }
 
@@ -75,7 +76,7 @@ class TicketManagementService{
                     Mail::to($gestionnaire->email)->send(new NewOrderNotificationMail($ticket));
                 }
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Log::error("Echec de l'envoi du mail gestionnaire : " . $e->getMessage());
         }
 
@@ -111,7 +112,7 @@ class TicketManagementService{
     {
         $ticket = Ticket::with(['user', 'services'])->findOrFail($ticketId);
 
-        $allowedStatuses = ['reçu', 'en_traitement', 'pret', 'recupere'];
+        $allowedStatuses = ['recu', 'reçu', 'en_traitement', 'pret', 'recupere'];
 
         if (!in_array($newStatus, $allowedStatuses)) {
             throw new Exception("Le statut '{$newStatus}' n'est pas valide.");

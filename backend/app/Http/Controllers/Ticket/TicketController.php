@@ -76,7 +76,6 @@ class TicketController extends Controller
         $ticket = Ticket::with(['services', 'user'])
             ->where('user_id', $request->user()->id)
             ->where('id', $id)
-            ->paginate(10)
             ->first();
 
         if (!$ticket) {

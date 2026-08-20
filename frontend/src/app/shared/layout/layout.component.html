@@ -1,0 +1,108 @@
+<div class="flex h-screen bg-slate-50 overflow-hidden font-sans">
+
+  <!-- SIDEBAR (DESKTOP) -->
+  <aside class="hidden md:flex w-64 bg-white border-r border-slate-200 flex-col justify-between z-20">
+    <div>
+      <!-- BRAND HEADER -->
+      <div class="p-6 flex items-center space-x-3">
+        <img src="assets/logo.png" alt="Pressing LIC" class="h-10 w-auto object-contain" />
+        <div>
+          <h1 class="font-extrabold text-slate-900 text-base leading-none tracking-tight">Pressing LIC</h1>
+          <span class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400">LAUNDRY MANAGEMENT</span>
+        </div>
+      </div>
+
+      <!-- ROLE ACTION BUTTON -->
+      <div class="px-4 mb-6">
+        @if (isAdmin) {
+          <a routerLink="/client/catalogue" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-xs flex items-center justify-center space-x-2 text-sm transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span>Nouveau Ticket</span>
+          </a>
+        } @else {
+          <a routerLink="/client/catalogue" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-xs flex items-center justify-center space-x-2 text-sm transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            <span>Nouvelle Commande</span>
+          </a>
+        }
+      </div>
+
+      <!-- NAV LINKS -->
+      <nav class="px-3 space-y-1">
+        @if (isAdmin) {
+          <a routerLink="/admin/dashboard" [class.bg-blue-50]="currentRoute.includes('/admin/dashboard')" [class.text-blue-600]="currentRoute.includes('/admin/dashboard')" class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl text-sm font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a routerLink="/admin/tickets" [class.bg-blue-50]="currentRoute.includes('/admin/tickets')" [class.text-blue-600]="currentRoute.includes('/admin/tickets')" class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl text-sm font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12h5.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125H7.5a1.125 1.125 0 0 1-1.125-1.125V7.125C6.375 6.504 6.879 6 7.5 6Z"/></svg>
+            <span>Gestion Tickets</span>
+          </a>
+          <a routerLink="/admin/services" [class.bg-blue-50]="currentRoute.includes('/admin/services')" [class.text-blue-600]="currentRoute.includes('/admin/services')" class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl text-sm font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6h.008v.008H6V6Z"/></svg>
+            <span>Services & Tarifs</span>
+          </a>
+        } @else {
+          <a routerLink="/client/catalogue" [class.bg-blue-50]="currentRoute.includes('/client/catalogue')" [class.text-blue-600]="currentRoute.includes('/client/catalogue')" class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl text-sm font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z"/></svg>
+            <span>Catalogue Services</span>
+          </a>
+          <a routerLink="/client/tickets" [class.bg-blue-50]="currentRoute.includes('/client/tickets')" [class.text-blue-600]="currentRoute.includes('/client/tickets')" class="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl text-sm font-semibold transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"/></svg>
+            <span>Mes Commandes</span>
+          </a>
+        }
+      </nav>
+    </div>
+
+    <!-- USER FOOTER -->
+    <div class="p-4 border-t border-slate-100 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
+          {{ currentUser?.name?.charAt(0) || 'U' }}
+        </div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-bold text-slate-800 truncate">{{ currentUser?.name || 'Utilisateur' }}</p>
+          <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded" [ngClass]="isAdmin ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'">
+            {{ isAdmin ? 'Gestionnaire' : 'Client' }}
+          </span>
+        </div>
+      </div>
+      <button (click)="logout()" title="Déconnexion" class="p-2 text-slate-400 hover:text-red-600 transition rounded-lg hover:bg-red-50 flex items-center justify-center">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+    <!-- TOPBAR -->
+    <header class="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between sticky top-0 z-10 shadow-xs">
+      <div class="flex items-center space-x-4">
+        <!-- MOBILE TOGGLE BUTTON -->
+        <button (click)="toggleMobileMenu()" class="md:hidden p-2 text-slate-500 hover:text-slate-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+        <span class="font-extrabold text-slate-800 text-sm hidden sm:inline">Pressing LIC — Espace {{ isAdmin ? 'Gestionnaire' : 'Client' }}</span>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <span class="px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl flex items-center space-x-2">
+          <span class="w-2 h-2 rounded-full" [ngClass]="isAdmin ? 'bg-emerald-500' : 'bg-blue-500'"></span>
+          <span>{{ currentUser?.name }}</span>
+        </span>
+        <button (click)="logout()" class="px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition flex items-center space-x-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H2.25"/></svg>
+          <span>Déconnexion</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="p-6 max-w-7xl w-full mx-auto">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+</div>

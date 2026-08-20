@@ -1,20 +1,20 @@
-<div class="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4">
-  <div class="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+<div class="min-h-screen bg-slate-100 flex flex-col justify-center items-center p-4 font-sans">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-xs border border-slate-200 p-8">
 
     <!-- Logo -->
     <div class="flex justify-center mb-4">
-      <img ngSrc="../../../../public/assets/logo.png" alt="Pressing LIC" class="h-20 w-auto object-contain" height="1024" width="1024"/>
+      <img src="assets/logo.png" alt="Pressing LIC" class="h-20 w-auto object-contain" height="1024" width="1024"/>
     </div>
 
     <!-- Titres -->
     <div class="text-center mb-8">
-      <h1 class="text-2xl font-bold text-slate-900 mb-2">Bienvenue</h1>
-      <p class="text-sm text-slate-500">Connectez-vous pour accéder à votre espace Pressing LIC.</p>
+      <h1 class="text-2xl font-extrabold text-slate-900 mb-1">Bienvenue</h1>
+      <p class="text-xs text-slate-500">Connectez-vous pour accéder à votre espace Pressing LIC.</p>
     </div>
 
     <!-- Alert Erreur  -->
     @if (errorMessage) {
-      <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl">
+      <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl font-medium">
         {{ errorMessage }}
       </div>
     }
@@ -25,7 +25,7 @@
         <label class="block text-xs font-bold text-slate-600 uppercase mb-2">ADRESSE EMAIL</label>
         <div class="relative">
           <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-            ✉️
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
           </span>
           <input
             type="email"
@@ -41,11 +41,11 @@
       <div>
         <div class="flex justify-between items-center mb-2">
           <label class="text-xs font-bold text-slate-600 uppercase">MOT DE PASSE</label>
-          <a href="#" class="text-xs font-medium text-blue-600 hover:underline">Mot de passe oublié ?</a>
+          <a href="#" class="text-xs font-semibold text-blue-600 hover:underline">Mot de passe oublié ?</a>
         </div>
         <div class="relative">
           <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-            🔒
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0V10.5m-1.5 0h12A1.5 1.5 0 0 1 19.5 12v6.75a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5V12a1.5 1.5 0 0 1 1.5-1.5Z"/></svg>
           </span>
           <input
             [type]="showPassword ? 'text' : 'password'"
@@ -59,7 +59,7 @@
             type="button"
             (click)="showPassword = !showPassword"
             class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600">
-            👁️
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
           </button>
         </div>
       </div>
@@ -72,17 +72,18 @@
           name="remember"
           class="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
         />
-        <label for="remember" class="ml-2 text-xs text-slate-600">Se souvenir de moi</label>
+        <label for="remember" class="ml-2 text-xs text-slate-600 font-medium">Se souvenir de moi</label>
       </div>
 
       <button
         type="submit"
         [disabled]="loading"
-        class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl transition duration-200 shadow-sm disabled:opacity-50">
+        class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition duration-200 shadow-xs disabled:opacity-50 flex items-center justify-center space-x-2">
         @if (loading) {
           <span>Connexion en cours...</span>
         } @else {
           <span>Se connecter</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
         }
       </button>
     </form>

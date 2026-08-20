@@ -40,13 +40,19 @@ export class AuthService {
     return localStorage.getItem('access_token');
   }
 
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value || this.getUserFromStorage();
+  }
+
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
 
   isAdmin(): boolean {
-    const user = this.currentUserSubject.value;
-    return user?.role?.name === 'Gestionnaire';
+    const user = this.currentUserSubject.value || this.getUserFromStorage();
+    if (!user) return false;
+    const roleName = user.role?.name || (typeof user.role === 'string' ? user.role : '');
+    return roleName === 'Gestionnaire' || user.role_id === 1;
   }
 
   private handleAuthSuccess(response: AuthResponse): void {

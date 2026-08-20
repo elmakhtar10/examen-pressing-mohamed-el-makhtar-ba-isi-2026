@@ -21,12 +21,17 @@ export const adminGuard: CanActivateFn = () => {
     return router.parseUrl('/login');
   }
 
-  const userInfo = localStorage.getItem('user_info');
-  const user = userInfo ? JSON.parse(userInfo) : null;
-
-  if (user?.role?.name === 'Gestionnaire' || authService.isAdmin()) {
+  if (authService.isAdmin()) {
     return true;
   }
 
-  return router.parseUrl('/client/tickets');
+  const userInfo = localStorage.getItem('user_info');
+  const user = userInfo ? JSON.parse(userInfo) : null;
+  const roleName = user?.role?.name || (typeof user?.role === 'string' ? user?.role : '');
+
+  if (roleName === 'Gestionnaire' || user?.role_id === 1) {
+    return true;
+  }
+
+  return router.parseUrl('/login');
 };

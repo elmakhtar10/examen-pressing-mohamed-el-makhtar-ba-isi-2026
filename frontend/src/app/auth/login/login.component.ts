@@ -29,15 +29,18 @@ export class LoginComponent {
       next: (res: AuthResponse) => {
         this.loading = false;
 
-        if (res.user?.role?.name === 'Gestionnaire') {
+        const roleName = res.user?.role?.name || (typeof res.user?.role === 'string' ? res.user?.role : '');
+        const isGestionnaire = roleName === 'Gestionnaire' || res.user?.role_id === 1;
+
+        if (isGestionnaire) {
           this.router.navigate(['/admin/dashboard']);
         } else {
-          this.router.navigate(['/client/tickets']);
+          this.router.navigate(['/client/catalogue']);
         }
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err.error?.message || 'Identifiants incorrects. Veuillez réessayer.';
+        this.errorMessage = err.error?.message || err.message || 'Identifiants incorrects. Veuillez réessayer.';
       }
     });
   }

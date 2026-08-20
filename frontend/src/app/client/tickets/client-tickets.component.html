@@ -1,0 +1,92 @@
+<div class="space-y-6">
+
+  <!-- HEADER -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-900">Mes Commandes & Suivi</h1>
+      <p class="text-xs text-slate-500 mt-1">Consultez l'historique de vos dépôts et suivez l'avancement du lavage/repassage.</p>
+    </div>
+
+    <a routerLink="/client/catalogue" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center justify-center space-x-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+      <span>Nouvelle Commande</span>
+    </a>
+  </div>
+
+  <!-- LISTE DES COMMANDES -->
+  @if (loading) {
+    <div class="p-12 text-center text-xs font-semibold text-slate-400 bg-white rounded-2xl border border-slate-200">
+      Chargement de vos commandes...
+    </div>
+  } @else {
+    <div class="space-y-4">
+      @for (ticket of tickets; track ticket.id) {
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-6 hover:border-slate-300 transition">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4 gap-3">
+            <div>
+              <div class="flex items-center space-x-3">
+                <span class="font-extrabold text-blue-600 text-base">Ticket #{{ ticket.code }}</span>
+                <span class="px-3 py-1 font-bold text-[11px] rounded-full" [ngClass]="getStatusBadgeClass(ticket.statut)">
+                  {{ getStatusLabel(ticket.statut) }}
+                </span>
+                @if (ticket.is_paid) {
+                  <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-full">PAYÉ</span>
+                } @else {
+                  <span class="px-2.5 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full">NON PAYÉ</span>
+                }
+              </div>
+              <p class="text-xs text-slate-400 mt-1">Déposé le {{ ticket.created_at | date:'dd MMMM yyyy, HH:mm' }}</p>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <span class="text-base font-extrabold text-slate-900">{{ ticket.montant_total | number }} FCFA</span>
+              <a [routerLink]="['/client/tickets', ticket.id]" class="px-3.5 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition inline-flex items-center">
+                <span>Détail & Reçu</span>
+                <svg class="w-3.5 h-3.5 ml-1 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- STATUS PROGRESS TIMELINE -->
+          <div class="grid grid-cols-4 gap-2 pt-2">
+            <div class="flex flex-col items-center text-center space-y-1">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs" [ngClass]="ticket.statut === 'recu' || ticket.statut === 'reçu' || ticket.statut === 'en_traitement' || ticket.statut === 'pret' || ticket.statut === 'recupere' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'">
+                1
+              </div>
+              <span class="text-[11px] font-semibold text-slate-700">Reçu</span>
+            </div>
+
+            <div class="flex flex-col items-center text-center space-y-1">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs" [ngClass]="ticket.statut === 'en_traitement' || ticket.statut === 'pret' || ticket.statut === 'recupere' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'">
+                2
+              </div>
+              <span class="text-[11px] font-semibold text-slate-700">En Traitement</span>
+            </div>
+
+            <div class="flex flex-col items-center text-center space-y-1">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs" [ngClass]="ticket.statut === 'pret' || ticket.statut === 'recupere' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-400'">
+                3
+              </div>
+              <span class="text-[11px] font-semibold text-slate-700">Prêt</span>
+            </div>
+
+            <div class="flex flex-col items-center text-center space-y-1">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs" [ngClass]="ticket.statut === 'recupere' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-400'">
+                4
+              </div>
+              <span class="text-[11px] font-semibold text-slate-700">Récupéré</span>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="p-12 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200 space-y-3">
+          <p>Vous n'avez pas encore déposé de commande.</p>
+          <a routerLink="/client/catalogue" class="inline-block px-4 py-2 bg-blue-600 text-white font-bold text-xs rounded-xl shadow-xs">
+            Consulter le catalogue & Déposer
+          </a>
+        </div>
+      }
+    </div>
+  }
+
+</div>

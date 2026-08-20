@@ -11,7 +11,8 @@ export interface MonthlyTicketData {
 
 export interface RevenueByServiceData {
   service_id: number;
-  service_nom: string;
+  service_libelle?: string;
+  service_nom?: string;
   total_revenue: number;
   total_quantity: number;
 }
@@ -19,9 +20,15 @@ export interface RevenueByServiceData {
 export interface TicketSummary {
   id: number;
   code: string;
-  client_nom: string;
+  client_nom?: string;
+  user?: {
+    id?: number;
+    name?: string;
+    email?: string;
+  };
   created_at: string;
   montant_total: number;
   is_paid: boolean;
-  statut: 'recu' | 'en_traitement' | 'pret' | 'recupere';
+  statut: 'recu' | 'reçu' | 'en_traitement' | 'pret' | 'recupere' | 'annule';
 }
+

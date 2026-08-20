@@ -1,0 +1,139 @@
+<div class="space-y-8">
+
+  <!-- HEADER -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-extrabold text-slate-900">Catalogue des Services</h1>
+      <p class="text-xs text-slate-500 mt-1">Sélectionnez vos prestations de lavage ou repassage et déposez votre commande.</p>
+    </div>
+
+    <div class="relative w-full md:w-80">
+      <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+      </span>
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (input)="applySearch()"
+        placeholder="Filtrer par libellé..."
+        class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-blue-500 shadow-xs transition"
+      />
+    </div>
+  </div>
+
+  @if (orderSuccessMessage) {
+    <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-2xl font-bold flex items-center space-x-2 animate-in fade-in">
+      <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+      <span>{{ orderSuccessMessage }} Redirection vers vos commandes...</span>
+    </div>
+  }
+
+  @if (orderErrorMessage) {
+    <div class="p-4 bg-red-50 border border-red-200 text-red-700 text-xs rounded-2xl font-medium">
+      {{ orderErrorMessage }}
+    </div>
+  }
+
+  <!-- CONTENT GRID: CATALOGUE & PANIER -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+    <!-- CATALOGUE SERVICES -->
+    <div class="lg:col-span-2 space-y-4">
+      @if (loading) {
+        <div class="p-12 text-center text-xs font-semibold text-slate-400 bg-white rounded-2xl border border-slate-200">
+          Chargement du catalogue...
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          @for (service of filteredServices; track service.id) {
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col justify-between hover:border-blue-300 transition group">
+              <div>
+                <div class="flex items-start justify-between">
+                  <h3 class="font-bold text-slate-900 text-sm group-hover:text-blue-600 transition">{{ service.libelle }}</h3>
+                  <span class="px-2.5 py-1 bg-blue-50 text-blue-700 font-extrabold text-xs rounded-lg">
+                    {{ service.prix_unitaire | number }} FCFA
+                  </span>
+                </div>
+                <p class="text-xs text-slate-500 mt-2 line-clamp-2">{{ service.description }}</p>
+              </div>
+
+              <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-slate-400">Quantité :</span>
+
+                <div class="flex items-center space-x-2 bg-slate-50 border border-slate-200 rounded-xl p-1">
+                  <button (click)="updateQuantity(service, -1)" class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold flex items-center justify-center text-sm transition">
+                    -
+                  </button>
+                  <span class="w-8 text-center text-xs font-bold text-slate-900">
+                    {{ getQuantity(service.id) }}
+                  </span>
+                  <button (click)="updateQuantity(service, 1)" class="w-7 h-7 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-sm hover:bg-blue-700 transition">
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          } @empty {
+            <div class="col-span-2 p-10 text-center text-xs text-slate-400 bg-white rounded-2xl border border-slate-200">
+              Aucun service actif disponible pour l'instant.
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- RÉSUMÉ DU PANIER / COMMANDE -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs h-fit space-y-6 sticky top-20">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h2 class="font-extrabold text-slate-900 text-base flex items-center space-x-2">
+          <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121 0 2.08-.787 2.3-1.887l1.372-6.862c.117-.585-.333-1.126-.928-1.126H5.105M7.5 14.25H5.105m0 0 1.25-6"/></svg>
+          <span>Votre Commande</span>
+        </h2>
+        @if (cartItems.length > 0) {
+          <button (click)="clearCart()" class="text-xs text-slate-400 hover:text-red-500 font-medium">
+            Vider
+          </button>
+        }
+      </div>
+
+      <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
+        @for (item of cartItems; track item.service.id) {
+          <div class="flex items-center justify-between text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <div>
+              <p class="font-bold text-slate-800">{{ item.service.libelle }}</p>
+              <p class="text-slate-400 text-[11px] mt-0.5">{{ item.quantite }} x {{ item.service.prix_unitaire | number }} FCFA</p>
+            </div>
+            <span class="font-extrabold text-slate-900">
+              {{ (item.quantite * item.service.prix_unitaire) | number }} FCFA
+            </span>
+          </div>
+        } @empty {
+          <div class="py-8 text-center text-xs text-slate-400">
+            Votre sélection est vide.<br/>Ajoutez des services depuis le catalogue.
+          </div>
+        }
+      </div>
+
+      <div class="border-t border-slate-100 pt-4 space-y-3">
+        <div class="flex justify-between text-xs text-slate-500 font-medium">
+          <span>Articles sélectionnés :</span>
+          <span class="font-bold text-slate-800">{{ totalItemsCount }}</span>
+        </div>
+        <div class="flex justify-between text-sm font-extrabold text-slate-900 border-t border-slate-100 pt-2">
+          <span>TOTAL COMPTANT :</span>
+          <span class="text-blue-600">{{ cartTotalAmount | number }} FCFA</span>
+        </div>
+
+        <button
+          (click)="submitOrder()"
+          [disabled]="cartItems.length === 0 || submittingOrder"
+          class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-xs transition disabled:opacity-50 flex items-center justify-center space-x-2">
+          <span>{{ submittingOrder ? 'Envoi en cours...' : 'Déposer la Commande' }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,132 @@
+<div class="space-y-6">
+
+  <!-- TOP BAR -->
+  <div class="flex items-center justify-between">
+    <a routerLink="/admin/tickets" class="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center space-x-1.5 transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+      <span>Retour à la liste des tickets</span>
+    </a>
+    <button (click)="printReceipt()" class="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-xl hover:bg-slate-50 shadow-xs flex items-center space-x-2 transition">
+      <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m11.32-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.32 0C18.665 18 19.5 17.165 19.5 16.17V10.5A2.25 2.25 0 0 0 17.25 8.25H6.75A2.25 2.25 0 0 0 4.5 10.5v5.67c0 .995.835 1.83 1.84 1.83h11.32ZM6.75 8.25V4.5a2.25 2.25 0 0 1 2.25-2.25h6a2.25 2.25 0 0 1 2.25 2.25v3.75"/></svg>
+      <span>Imprimer Reçu</span>
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="p-12 text-center text-xs font-semibold text-slate-400">
+      Chargement du détail du ticket...
+    </div>
+  } @else if (ticket) {
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xs p-8 space-y-8">
+
+      <!-- HEADER TICKET -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-slate-100 gap-4">
+        <div>
+          <div class="flex items-center space-x-3">
+            <h1 class="text-2xl font-extrabold text-slate-900">Ticket #{{ ticket.code }}</h1>
+            @if (ticket.is_paid) {
+              <span class="px-3 py-1 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full uppercase">PAYÉ</span>
+            } @else {
+              <span class="px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full uppercase">NON PAYÉ</span>
+            }
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Déposé le {{ ticket.created_at | date:'dd MMMM yyyy à HH:mm' }}</p>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          @if (!ticket.is_paid) {
+            <button (click)="payTicket()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center space-x-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h16.5A2.25 2.25 0 0 1 22.5 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H3.75a2.25 2.25 0 0 1-2.25-2.25V6.75A2.25 2.25 0 0 1 3.75 4.5ZM12 12a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z"/></svg>
+              <span>Enregistrer le Paiement</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- INFOS CLIENT & STATUT -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">INFORMATIONS CLIENT</span>
+          <p class="text-base font-extrabold text-slate-900 mt-2">{{ ticket.user?.name || ticket.client_nom || 'Client' }}</p>
+          <p class="text-xs text-slate-500 mt-1 flex items-center">
+            <svg class="w-3.5 h-3.5 inline mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg>
+            <span>{{ ticket.user?.email || 'N/A' }}</span>
+          </p>
+          <p class="text-xs text-slate-500 mt-0.5 flex items-center">
+            <svg class="w-3.5 h-3.5 inline mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.896-1.499-5.24-3.843-6.74-6.74l1.293-.97c.362-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"/></svg>
+            <span>{{ ticket.user?.phone || 'N/A' }}</span>
+          </p>
+        </div>
+
+        <div>
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">ÉVOLUTION DU STATUT</span>
+          <div class="mt-2 flex items-center space-x-2">
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 font-bold text-xs rounded-full uppercase">
+              {{ ticket.statut }}
+            </span>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            @if (ticket.statut === 'recu' || ticket.statut === 'reçu') {
+              <button (click)="updateStatus('en_traitement')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition">
+                ➔ Passer en Traitement
+              </button>
+            } @else if (ticket.statut === 'en_traitement') {
+              <button (click)="updateStatus('pret')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition">
+                ➔ Marquer Prêt
+              </button>
+            } @else if (ticket.statut === 'pret') {
+              <button (click)="updateStatus('recupere')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition">
+                ➔ Marquer Récupéré
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- LISTE DES ARTICLES / SERVICES DÉPOSÉS -->
+      <div>
+        <h2 class="text-base font-bold text-slate-800 mb-4">Détail des Prestations Déposées</h2>
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+              <th class="py-3 px-4">SERVICE / PRESTATION</th>
+              <th class="py-3 px-4 text-center">QUANTITÉ</th>
+              <th class="py-3 px-4 text-right">PRIX UNITAIRE</th>
+              <th class="py-3 px-4 text-right">TOTAL</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-xs font-medium text-slate-700">
+            @for (item of ticket.services; track item.id || item.service_id) {
+              <tr>
+                <td class="py-3.5 px-4 font-bold text-slate-900">
+                  {{ item.service?.libelle || 'Prestation' }}
+                </td>
+                <td class="py-3.5 px-4 text-center font-bold">{{ item.quantite }}</td>
+                <td class="py-3.5 px-4 text-right text-slate-500">{{ item.prix_unitaire || item.service?.prix_unitaire | number }} FCFA</td>
+                <td class="py-3.5 px-4 text-right font-bold text-slate-900">
+                  {{ (item.quantite * (item.prix_unitaire || item.service?.prix_unitaire || 0)) | number }} FCFA
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RECAPITULATIF FINANCIER -->
+      <div class="flex justify-end pt-4 border-t border-slate-100">
+        <div class="w-72 bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2 text-xs">
+          <div class="flex justify-between text-sm font-extrabold text-slate-900 border-t border-slate-200 pt-2">
+            <span>TOTAL À PAYER :</span>
+            <span class="text-blue-600">{{ ticket.montant_total | number }} FCFA</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  } @else {
+    <div class="p-12 text-center text-xs font-semibold text-slate-400">
+      Ticket introuvable.
+    </div>
+  }
+
+</div>
