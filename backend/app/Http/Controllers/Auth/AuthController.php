@@ -35,34 +35,34 @@ class AuthController extends Controller
         ]);
     }
 
-public function register(Request $request)
-{
-    $validated = $request->validate([
-        'name'     => ['required', 'string', 'max:255'],
-        'email'    => ['required', 'string', 'email', 'unique:users,email'],
-        'password' => ['required', 'string'],
-        'phone'    => ['nullable', 'string'],
-    ]);
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'unique:users,email'],
+            'password' => ['required', 'string'],
+            'phone'    => ['nullable', 'string'],
+        ]);
 
-    $clientRole = Role::where('name', 'Client')->first();
+        $clientRole = Role::where('name', 'Client')->first();
 
-    $user = User::create([
-        'name'     => $validated['name'],
-        'email'    => $validated['email'],
-        'phone'    => $validated['phone'] ?? null,
-        'password' => Hash::make($validated['password']),
-        'role_id'  => $clientRole ? $clientRole->id : 2
-    ]);
+        $user = User::create([
+            'name'     => $validated['name'],
+            'email'    => $validated['email'],
+            'phone'    => $validated['phone'] ?? null,
+            'password' => Hash::make($validated['password']),
+            'role_id'  => $clientRole ? $clientRole->id : 2
+        ]);
 
-    $token = $user->createToken('angular_token')->plainTextToken;
+        $token = $user->createToken('angular_token')->plainTextToken;
 
-    return response()->json([
-        'message'      => 'Inscription réussie.',
-        'access_token' => $token,
-        'token_type'   => 'Bearer',
-        'user'         => $user
-    ], 201);
-}
+        return response()->json([
+            'message'      => 'Inscription réussie.',
+            'access_token' => $token,
+            'token_type'   => 'Bearer',
+            'user'         => $user
+        ], 201);
+    }
 
     public function logout(Request $request)
     {
